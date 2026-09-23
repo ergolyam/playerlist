@@ -26,7 +26,9 @@ controls.register_on_press(function(user, key)
 		})}
 		for i, player, color, text in playerlist.iterator() do
 			local name = player:get_player_name()
-			local ping = math.max(1, math.ceil(4 - (minetest.get_player_information(name).avg_rtt or 0) * 50))
+                        local info_rtt = minetest.get_player_information(name).avg_rtt or 0
+			local ping = math.max(1, math.ceil(4 - info_rtt * 50))
+                        local ping_ms = math.floor(info_rtt * 1000 + 0.5)
 			table.insert(huds, user:hud_add({
 				hud_elem_type = "text",
 				position = {x = 0.5, y = 0},
@@ -45,6 +47,15 @@ controls.register_on_press(function(user, key)
 				scale = {x = 1.5, y = 1.5},
 				number = 0xFFFFFF,
 			}))
+                        table.insert(huds, user:hud_add({
+                                hud_elem_type = "text",
+                                position = {x = 0.5, y = 0},
+                                offset = {x = 195, y = 23 + (i - 1) * 18},
+                                text = ping_ms .. " ms",
+                                alignment = {x = -1, y = 1},
+                                scale = {x = 100, y = 100},
+                                number = 0xFFFFFF,
+                        }))
 		end
 		playerlist.huds[user_name] = huds
 	end
